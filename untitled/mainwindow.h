@@ -3,7 +3,10 @@
 
 #include <QMainWindow>
 #include <QPushButton>
-
+#include <QLabel>
+#include <QFile>
+#include <QLineEdit>
+#include <define.h>
 namespace Ui {
 class MainWindow;
 }
@@ -23,6 +26,16 @@ private:
     QMenuBar* menuBar;
     QMenu* menu;
     QString* fileName;
+    QLineEdit* fileNameEdit;
+    QFile* file;
+    QByteArray* context;
+    Byte header; //标记signature位置
+
+    QFrame* NT_HEADERS;
+    QLabel* peSignatureLB;
+    QLineEdit* peSignatureLE;
+    QLabel* peMachineLB;
+    QLineEdit* peMachineLE;
 
 private slots:
 
