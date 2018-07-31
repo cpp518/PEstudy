@@ -3,40 +3,43 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "define.h"
+#include <QMessageBox>
+
+int MainWindow::itoch[16] = {48,49,50,51,52,53,54,55,56,57,65,66,67,68,69,70};
+QString MainWindow::atos(BYTE *buffer,int num){
+    QString str;
+    for(int i=0;i<num;i++){
+        int t = buffer[num-i-1];
+        if(t!=0){
+            if(t>=16){
+                str.append(char(itoch[t/16]));
+                str.append(char(itoch[t%16]));
+            }
+            else{
+                str.append("0");
+                str.append(char(itoch[t]));
+            }
+        }
+        else{
+            str.append("00");
+        }
+    }
+    return str;
+}
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    //ui->setupUi(this);
+    ui->setupUi(this);
     //设置窗口大小，并且无法调整,设置标题栏
     this->setWindowTitle(tr("PEStudy"));
-    this->setFixedSize(WindowsW,WindowsH);
-    this->menuBar = new QMenuBar(this);
-    menuBar->setGeometry(MenuBarX,MenuBarY,MenuBarW,MenuBarH);
-    this->menu = menuBar->addMenu("文件");
-    this->openFile = new QAction(tr("打开文件"),this);
-    this->exit = new QAction(tr("退出"),this);
-    this->fileNameEdit = new QLineEdit(this);
-    this->fileNameEdit->setReadOnly(true);
-    this->fileNameEdit->setGeometry(OpenFileEditX,OpenFileEditY,OpenFileEditW,OpenFileEditH);
-    this->fileNameEdit->show();
+    //this->setFixedSize(WindowsW,WindowsH);
 
-    this->NT_HEADERS = new QFrame(this);
-    this->NT_HEADERS->setGeometry(FRAMEX,FRAMEY,FRAMEW,FRAMEH);
-    this->peMachineLB = new QLabel(tr("Machine"),this->NT_HEADERS);
-    this->peMachineLB->setGeometry(PEMACHINELBX,PEMACHINELBY,PEMACHINELBW,PEMACHINELBH);
-    this->peMachineLB->show();
-    this->peMachineLE = new QLineEdit(this->NT_HEADERS);
-    this->peMachineLE->setReadOnly(true);
-    this->peMachineLE->setGeometry(PEMACHINELEX,PEMACHINELEY,PEMACHINELEW,PEMACHINELEH);
-    this->peMachineLE->show();
-    menu->addAction(openFile);
-    menu->addAction(exit);
+    this->ui->Optional_HEADERSFR1->setVisible(false);
+    this->ui->File_HEADERSFR->setVisible(true);
 
-
-    connect(exit,SIGNAL(triggered(bool)),this,SLOT(CloseWindow()));
-    connect(openFile,SIGNAL(triggered(bool)),this,SLOT(OpenFileName()));
 
 }
 
@@ -46,22 +49,61 @@ MainWindow::~MainWindow()
    // delete openFile;
 }
 
-void MainWindow::CloseWindow(){
+
+void MainWindow::on_action_1_triggered()
+{
+    QString openFileTest = QFileDialog::getOpenFileName(
+                this,tr("打开exe文件"),"./","*.exe;;*.dll");
+    if(openFileTest==""){
+        return;
+    }
+    this->fileName = new QString(openFileTest);
+
+    this->ui->fileNameEdit->setText(*this->fileName);
+    this->file = new QFile(*this->fileName);
+    this->file->open(QIODevice::ReadOnly);
+    if(this->file->isOpen()){
+        qint64 size = this->file->size();
+        this->context = new BYTE[size];
+        qint64 length = this->file->read((char*)this->context,size);
+
+        if(length != -1){
+        this->header = this->context[0x3C];   //获取PE标志的位置
+       // qDebug()<<this->header+MACHINE_MOVE;
+        //展示内容
+        this->ui->CharacteristicsLE->setText(MainWindow::atos(&(this->context[this->header+CHARACTERISTICS_MOVE]),CHARACTERISTICS_SIZE));
+        this->ui->MachineLE->setText(MainWindow::atos(&(this->context[this->header+MACHINE_MOVE]),MACHINE_SIZE));
+        this->ui->NumberOfSectionsLE->setText(MainWindow::atos(&(this->context[this->header+NUMBEROFSESSIONS_MOVE]),NUMBEROFSESSIONS_SIZE));
+        this->ui->TimeDateStampLE->setText(MainWindow::atos(&(this->context[this->header+TIMEDATESTAMP_MOVE]),TIMEDATESTAMP_SIZE));
+        this->ui->PointerOfSymbolTableLE->setText(MainWindow::atos(&(this->context[this->header+POINTEROFSYMBOLTABLE_MOVE]),POINTEROFSYMBOLTABLE_SIZE));
+        this->ui->NumberOfSymbolsLE->setText(MainWindow::atos(&(this->context[this->header+NUMBEROFSYMBOLS_MOVE]),NUMBEROFSYMBOLS_SIZE));
+        this->ui->SizeOfOptionalHeaderLE->setText(MainWindow::atos(&(this->context[this->header+SIZEOFOPTIONALHEADER_MOVE]),SIZEOFOPTIONALHEADER_SIZE));
+        }
+        else{
+             QMessageBox::information(this,tr("Error"),tr("读取文件失败"),QMessageBox::Yes);
+        }
+        this->file->close();
+
+    }
+    else{
+        QMessageBox::information(this,tr("Error"),tr("打开文件失败"),QMessageBox::Yes);
+    }
+}
+
+void MainWindow::on_action_2_triggered()
+{
     this->close();
 }
 
-void MainWindow::OpenFileName(){
-    this->fileName = new QString(QFileDialog::getOpenFileName(
-                this,tr("打开exe文件"),"./","*.exe;;*.dll"));
-    this->fileNameEdit->setText(*this->fileName);
-    this->file = new QFile(*this->fileName);
-    this->file->open(QIODevice::ReadOnly);
-    this->context = new QByteArray(this->file->readAll());
-//  qDebug()<<this->context->size();
-    this->header = (Byte)this->context->at(0x3c);
 
-//    qDebug()<<(Byte)this->context->at(128);
-//    qDebug()<<(Byte)this->context->at(129);
-//    qDebug()<<(Byte)this->context->at(130);
-//    qDebug()<<(Byte)this->context->at(131);
+void MainWindow::on_actionFile_Header_triggered()
+{
+    this->ui->File_HEADERSFR->setVisible(true);
+    this->ui->Optional_HEADERSFR1->setVisible(false);
+}
+
+void MainWindow::on_actionOptional_HEADERSFR_triggered()
+{
+    this->ui->Optional_HEADERSFR1->setVisible(true);
+    this->ui->File_HEADERSFR->setVisible(false);
 }

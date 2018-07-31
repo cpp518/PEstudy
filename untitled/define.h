@@ -1,48 +1,35 @@
 #ifndef DEFINE_H
 #define DEFINE_H
 
-#define Byte unsigned char
-
-#define WindowsW 500
-#define WindowsH 300
-#define WindowsX 500
-#define WindowsY 500
-
-#define MenuBarW WindowsW
-#define MenuBarH 25
-#define MenuBarX 0
-#define MenuBarY 0
-
-#define OpenFileEditW WindowsW
-#define OpenFileEditH 25
-#define OpenFileEditX 0
-#define OpenFileEditY 26
-
-#define OpenFilePushButtonW 100
-#define OpenFilePushButtonH 40
-#define OpenFilePushButtonX 30
-#define OpenFilePushButtonY 30
-
-#define FRAMEW WindowsW
-#define FRAMEH WindowsH-MenuBarH-OpenFileEditH
-#define FRAMEX 0
-#define FRAMEY MenuBarH+OpenFileEditH
+#define BYTE unsigned char
+#define DWORD unsigned int
 
 
-#define PEMACHINELBW 100
-#define PEMACHINELBH 20
-#define PEMACHINELBX 0
-#define PEMACHINELBY 10
 
-#define PEMACHINELEW 100
-#define PEMACHINELEH 20
-#define PEMACHINELEX 110
-#define PEMACHINELEY 10
 
 #define SIGNATURE_MOVE 0         // 4
-#define MACHINE_MOVE 4           // 2
+#define SIGNATURE_SIZE 4
+#define MACHINE_MOVE 4
+#define MACHINE_SIZE 2
 #define NUMBEROFSESSIONS_MOVE 6  // 2
+#define NUMBEROFSESSIONS_SIZE 2
 #define TIMEDATESTAMP_MOVE 8     // 4
+#define TIMEDATESTAMP_SIZE 4
+#define POINTEROFSYMBOLTABLE_MOVE 12
+#define POINTEROFSYMBOLTABLE_SIZE 4
+#define NUMBEROFSYMBOLS_MOVE 16
+#define NUMBEROFSYMBOLS_SIZE 4
+#define SIZEOFOPTIONALHEADER_MOVE 20
+#define SIZEOFOPTIONALHEADER_SIZE 2
+#define CHARACTERISTICS_MOVE 22
+#define CHARACTERISTICS_SIZE 2
+
+#define MAGIC_MOVE 24
+#define MAGIC_SIZE 2
+#define MAJORLINKERVERSION_MOVE 26
+#define MAJORLINKERVERSION_SIZE 1
+#define MINORLINKERVERSION_MOVE 27
+#define MINORLINKERVERSION_SIZE 28
 
 #endif // DEFINE_H
 

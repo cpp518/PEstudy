@@ -19,3 +19,9 @@ HEADERS  += mainwindow.h \
     define.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    ../481517.jpg
+
+RESOURCES += \
+    image/background.qrc

@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QFile>
+#include <QMessageBox>
 #include <QLineEdit>
 #include <define.h>
 namespace Ui {
@@ -18,6 +19,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    static QString atos(BYTE *buffer,int num);    //buffer要转化的内容，num表示转化的个数
 
 private:
     Ui::MainWindow *ui;
@@ -28,23 +30,18 @@ private:
     QString* fileName;
     QLineEdit* fileNameEdit;
     QFile* file;
-    QByteArray* context;
-    Byte header; //标记signature位置
+    BYTE* context;
+    BYTE header; //标记signature位置
 
-    QFrame* NT_HEADERS;
-    QLabel* peSignatureLB;
-    QLineEdit* peSignatureLE;
-    QLabel* peMachineLB;
-    QLineEdit* peMachineLE;
 
+    static int itoch[16];
 private slots:
 
-    void CloseWindow();
-    void OpenFileName();
 
-
-
-
+    void on_action_1_triggered();
+    void on_action_2_triggered();
+    void on_actionFile_Header_triggered();
+    void on_actionOptional_HEADERSFR_triggered();
 };
 
 #endif // MAINWINDOW_H
