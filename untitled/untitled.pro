@@ -24,4 +24,4 @@ DISTFILES += \
     ../481517.jpg
 
 RESOURCES += \
-    image/background.qrc
+    image.qrc

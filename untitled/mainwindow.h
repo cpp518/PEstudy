@@ -42,6 +42,9 @@ private slots:
     void on_action_2_triggered();
     void on_actionFile_Header_triggered();
     void on_actionOptional_HEADERSFR_triggered();
+    void on_actionOptional_HEADERS_2_triggered();
+    void on_pushButton_3_clicked();
+    void on_pushButton_clicked();
 };
 
 #endif // MAINWINDOW_H
